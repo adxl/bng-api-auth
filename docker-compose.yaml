@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  api:
+    container_name: bng_api_auth
+    image: node:18-alpine
+    user: node
+    working_dir: /home/node
+    env_file: .env
+    ports:
+      - 9001:9000
+    volumes:
+      - .:/home/node
+    command: /bin/sh -c "npm i && npm run start:dev"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.auth.rule=PathPrefix(`/auth`)'
+    networks:
+      - bng
+
+  db:
+    container_name: bng_db_auth
+    image: postgres:13-alpine
+    ports:
+      - 54321:5432
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    volumes:
+      - bng-auth-db-data:/var/lib/postgresql/data:rw
+
+volumes:
+  bng-auth-db-data: {}
+
+networks:
+  bng:
+    external: true
