@@ -3,9 +3,9 @@ version: '3'
 services:
   api:
     container_name: bng_api_auth
-    image: node:18-alpine
-    user: node
-    working_dir: /home/node
+    build:
+      context: docker/api
+      target: development
     env_file: .env
     volumes:
       - .:/home/node
@@ -16,7 +16,7 @@ services:
 
   db:
     container_name: bng_db_auth
-    image: postgres:13-alpine
+    build: docker/db
     ports:
       - 54321:5432
     environment:

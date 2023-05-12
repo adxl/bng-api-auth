@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  api:
+    image: adxl/bng-api-auth:latest
+    deploy:
+      replicas: 3
+
+  db:
+    image: adxl/bng-db-auth:latest
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    deploy:
+      replicas: 2

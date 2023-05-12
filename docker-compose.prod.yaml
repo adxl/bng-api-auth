@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  api:
+    image: adxl/bng-api-auth:latest
+    build:
+      context: docker/api
+      target: production
+
+  db:
+    image: adxl/bng-db-auth:latest
+    build: docker/db
