@@ -4,9 +4,11 @@ services:
   api:
     image: adxl/bng-api-auth:latest
     build:
-      context: docker/api
+      context: .
       target: production
 
   db:
     image: adxl/bng-db-auth:latest
-    build: docker/db
+    build:
+      context: .
+      dockerfile: Dockerfile.db

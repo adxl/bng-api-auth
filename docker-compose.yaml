@@ -4,7 +4,7 @@ services:
   api:
     container_name: bng_api_auth
     build:
-      context: docker/api
+      context: .
       target: development
     env_file: .env
     volumes:
@@ -16,7 +16,9 @@ services:
 
   db:
     container_name: bng_db_auth
-    build: docker/db
+    build:
+      context: .
+      dockerfile: Dockerfile.db
     ports:
       - 54321:5432
     environment:
