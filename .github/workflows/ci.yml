@@ -8,7 +8,8 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Setup
         uses: actions/setup-node@v3
@@ -46,3 +47,38 @@ jobs:
       - name: Push
         run: docker compose -f docker-compose.prod.yaml push
 
+  deploy:
+    needs: publish
+    runs-on: ubuntu-20.04
+
+    if: github.ref_name == 'master'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup
+        run: |
+          sed -i 's|@DB_USER@|${{ secrets.DB_USER }}|g' ./docker-compose.deploy.yaml
+          sed -i 's|@DB_PASSWORD@|${{ secrets.DB_PASSWORD }}|g' ./docker-compose.deploy.yaml
+          sed -i 's|@DB_NAME@|${{ secrets.DB_NAME }}|g' ./docker-compose.deploy.yaml
+          sed -i 's|@DATABASE_URL@|${{ secrets.DATABASE_URL }}|g' ./docker-compose.deploy.yaml
+
+      - name: Config
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          source: 'docker-compose.deploy.yaml'
+          target: '/root'
+
+      - name: Run
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.DROPLET_IP }}
+          username: ${{ secrets.DROPLET_USER }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            docker stack deploy -c docker-compose.deploy.yaml auth
+            rm docker-compose.deploy.yaml

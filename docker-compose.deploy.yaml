@@ -3,6 +3,9 @@ version: '3'
 services:
   auth-api-service:
     image: adxl/bng-api-auth:latest
+    environment:
+      STAGE: production
+      DATABASE_URL: '@DATABASE_URL@'
     networks:
       - bng
       - default
@@ -12,9 +15,9 @@ services:
   auth-db-service:
     image: adxl/bng-db-auth:latest
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: '@DB_USER@'
+      POSTGRES_PASSWORD: '@DB_PASSWORD@'
+      POSTGRES_DB: '@DB_NAME@'
     networks:
       - default
     deploy:
@@ -25,4 +28,3 @@ networks:
     driver: overlay
   bng:
     external: true
-
