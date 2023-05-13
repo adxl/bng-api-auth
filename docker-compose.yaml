@@ -1,8 +1,7 @@
 version: '3'
 
 services:
-  api:
-    container_name: bng_api_auth
+  auth-api-service:
     build:
       context: .
       target: development
@@ -14,8 +13,7 @@ services:
       - default
       - bng
 
-  db:
-    container_name: bng_db_auth
+  auth-db-service:
     build:
       context: .
       dockerfile: Dockerfile.db

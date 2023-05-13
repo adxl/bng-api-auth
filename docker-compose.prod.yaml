@@ -1,13 +1,13 @@
 version: '3'
 
 services:
-  api:
+  auth-api-service:
     image: adxl/bng-api-auth:latest
     build:
       context: .
       target: production
 
-  db:
+  auth-db-service:
     image: adxl/bng-db-auth:latest
     build:
       context: .
