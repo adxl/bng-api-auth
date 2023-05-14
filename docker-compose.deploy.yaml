@@ -10,6 +10,11 @@ services:
       - bng
     deploy:
       replicas: 3
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 3
+        window: 120s
 
 networks:
   bng:
