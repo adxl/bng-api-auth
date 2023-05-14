@@ -8,23 +8,9 @@ services:
       DATABASE_URL: '@DATABASE_URL@'
     networks:
       - bng
-      - default
     deploy:
       replicas: 3
 
-  auth-db-service:
-    image: adxl/bng-db-auth:latest
-    environment:
-      POSTGRES_USER: '@DB_USER@'
-      POSTGRES_PASSWORD: '@DB_PASSWORD@'
-      POSTGRES_DB: '@DB_NAME@'
-    networks:
-      - default
-    deploy:
-      replicas: 2
-
 networks:
-  default:
-    driver: overlay
   bng:
     external: true

@@ -7,4 +7,12 @@ export const TypeOrmConfig: TypeOrmModuleOptions = {
   url: process.env.DATABASE_URL,
   entities: [],
   synchronize: IS_LOCAL,
+  ssl: !IS_LOCAL,
+  extra: IS_LOCAL
+    ? {}
+    : {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
 };

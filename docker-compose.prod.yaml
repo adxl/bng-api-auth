@@ -6,9 +6,3 @@ services:
     build:
       context: .
       target: production
-
-  auth-db-service:
-    image: adxl/bng-db-auth:latest
-    build:
-      context: .
-      dockerfile: Dockerfile.db
