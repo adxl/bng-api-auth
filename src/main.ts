@@ -10,10 +10,7 @@ async function bootstrap() {
       host: '0.0.0.0',
       port: 9000,
     },
-    logger: [
-      'error',
-      ...(process.env.STAGE === 'local' ? ['warn', 'debug', 'log'] : []),
-    ] as LogLevel[],
+    logger: ['error', 'warn', 'debug', 'log'] as LogLevel[],
   });
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
