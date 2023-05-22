@@ -14,9 +14,7 @@ services:
       - bng
 
   auth-db-service:
-    build:
-      context: .
-      dockerfile: Dockerfile.db
+    image: postgresql:13-alpine
     ports:
       - 54321:5432
     environment:
