@@ -29,6 +29,8 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.3.0",
     "@nestjs/typeorm": "^9.0.1",
+    "@sentry/node": "^7.53.1",
+    "@sentry/tracing": "^7.53.1",
     "@types/compression": "^1.7.2",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",
