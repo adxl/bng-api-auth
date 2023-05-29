@@ -17,7 +17,7 @@ import { JwtStrategy } from 'src/domains/auth/auth.strategy';
         secret: config.get('JWT_KEY'),
       }),
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Role]),
   ],
   providers: [UsersService, AuthHelper, JwtStrategy, ConfigService],
   controllers: [UsersController],
