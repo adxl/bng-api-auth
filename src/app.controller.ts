@@ -10,4 +10,9 @@ export class AppController {
   getIndex(): string {
     return this.appService.index();
   }
+
+  @EventPattern('kill')
+  kill(): void {
+    return this.appService.kill();
+  }
 }
