@@ -23,8 +23,8 @@ jobs:
       - name: Build
         run: npm run build
 
-      # - name: Tests
-      #   run: npm run test
+      - name: Tests
+        run: npm run test
 
   publish:
     needs: build
@@ -61,6 +61,8 @@ jobs:
       - name: Setup
         run: |
           sed -i 's|@DATABASE_URL@|${{ secrets.DATABASE_URL }}|g' ./docker-compose.deploy.yaml
+          sed -i 's|@JWT_KEY@|${{ secrets.JWT_KEY }}|g' ./docker-compose.deploy.yaml
+          sed -i 's|@SENTRY_DSN@|${{ secrets.SENTRY_DSN }}|g' ./docker-compose.deploy.yaml
 
       - name: Config
         uses: appleboy/scp-action@v0.1.4
