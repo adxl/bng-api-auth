@@ -1,10 +1,11 @@
-import { LogLevel, ValidationPipe } from '@nestjs/common';
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { LogLevel } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport } from '@nestjs/microservices';
 
 import * as Sentry from '@sentry/node';
-import { SentryFilter } from './filters/sentry.filter';
+import { SentryHttpFilter, SentryRpcFilter } from './filters/sentry.filter';
+import { CustomValidationPipe } from './pipes/validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
@@ -18,12 +19,12 @@ async function bootstrap() {
 
   if (process.env.STAGE === 'production') {
     Sentry.init({ dsn: process.env.SENTRY_DSN });
-    app.useGlobalFilters(
-      new SentryFilter(app.get(HttpAdapterHost).httpAdapter),
-    );
   }
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new CustomValidationPipe());
+
+  app.useGlobalFilters(new SentryRpcFilter());
+  app.useGlobalFilters(new SentryHttpFilter());
 
   await app.listen();
 }

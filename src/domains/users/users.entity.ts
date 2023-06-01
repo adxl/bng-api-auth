@@ -1,11 +1,5 @@
 import { Exclude } from 'class-transformer';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  BeforeInsert,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BeforeInsert } from 'typeorm';
 import { Role } from './role.entity';
 import * as bcrypt from 'bcryptjs';
 

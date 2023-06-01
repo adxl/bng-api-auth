@@ -8,8 +8,6 @@ export class AppService {
   }
 
   kill(): void {
-    throw new RpcException(
-      new ServiceUnavailableException('Service killed successfully'),
-    );
+    throw new RpcException(new ServiceUnavailableException('Service killed successfully'));
   }
 }
