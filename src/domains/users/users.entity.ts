@@ -1,7 +1,14 @@
 import { Exclude } from 'class-transformer';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BeforeInsert } from 'typeorm';
-import { Role } from './role.entity';
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+
+export enum UserRole {
+  USER = 'USER',
+  TECHNICIAN = 'TECHNICIAN',
+  HOST = 'HOST',
+  INSTRUCTOR = 'INSTRUCTOR',
+  ADMINISTRATOR = 'ADMINISTRATOR',
+}
 
 @Entity()
 export class User {
@@ -21,10 +28,15 @@ export class User {
   @Exclude()
   password: string;
 
-  @ManyToOne(() => Role, (role) => role.users)
-  role: Role;
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
   @Column({ default: false })
+  @Exclude()
   removed: boolean;
 
   @Column()

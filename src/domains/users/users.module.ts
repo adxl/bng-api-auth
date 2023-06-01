@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthHelper } from 'src/domains/auth/auth.helper';
 import { JwtStrategy } from 'src/domains/auth/auth.strategy';
+import { AuthService } from '../auth/auth.service';
 
 @Module({
   imports: [
@@ -17,9 +18,9 @@ import { JwtStrategy } from 'src/domains/auth/auth.strategy';
         secret: config.get('JWT_KEY'),
       }),
     }),
-    TypeOrmModule.forFeature([User, Role]),
+    TypeOrmModule.forFeature([User]),
   ],
-  providers: [UsersService, AuthHelper, JwtStrategy, ConfigService],
+  providers: [UsersService, AuthHelper, JwtStrategy, ConfigService, AuthService],
   controllers: [UsersController],
 })
 export class UsersModule {}

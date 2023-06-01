@@ -8,7 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthHelper } from './auth.helper';
 import { JwtStrategy } from './auth.strategy';
 import { User } from 'src/domains/users/users.entity';
-import { Role } from '../users/role.entity';
 
 @Module({
   imports: [
@@ -20,7 +19,7 @@ import { Role } from '../users/role.entity';
         secret: config.get('JWT_KEY'),
       }),
     }),
-    TypeOrmModule.forFeature([User, Role]),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
   providers: [AuthService, AuthHelper, JwtStrategy, ConfigService],

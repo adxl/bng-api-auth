@@ -1,4 +1,4 @@
-import { Role } from '../role.entity';
+import { UserRole } from '../users.entity';
 
 export class UserDto {
   id: string;
@@ -6,7 +6,7 @@ export class UserDto {
   firstName: string;
   lastName: string;
   password: string;
-  role: Role;
+  role: UserRole;
   removed: boolean;
   createdAt: Date;
 }

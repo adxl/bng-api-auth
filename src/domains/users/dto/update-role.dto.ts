@@ -1,21 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsUUID } from 'class-validator';
+import { IsEnum, IsString, IsUUID } from 'class-validator';
+import { UserRole } from '../users.entity';
 
 export class UpdateUserRoleDto {
   @IsUUID()
   id: string;
 
-  @IsIn([
-    'UTILISATEUR',
-    'TECHNICIEN',
-    'ANIMATEUR',
-    'INSTRUCTEUR',
-    'ADMINISTRATEUR',
-  ])
-  role:
-    | 'UTILISATEUR'
-    | 'TECHNICIEN'
-    | 'ANIMATEUR'
-    | 'INSTRUCTEUR'
-    | 'ADMINISTRATEUR';
+  @IsEnum(UserRole, { each: true })
+  role: UserRole;
+
+  @IsString()
+  token: string;
 }

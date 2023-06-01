@@ -51,4 +51,9 @@ export class AuthHelper {
 
     return true;
   }
+
+  public extractToken(reqToken: string): string | undefined {
+    const [type, token] = reqToken.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
+  }
 }
