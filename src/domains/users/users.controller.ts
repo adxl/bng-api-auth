@@ -32,7 +32,7 @@ export class UsersController {
   }
 
   @EventPattern('users.updateProfile')
-  public changeUserProfile(body: UpdateUserDto): Promise<object> {
+  public updateProfile(body: UpdateUserDto): Promise<object> {
     return this.userService.updateProfile(body);
   }
 
