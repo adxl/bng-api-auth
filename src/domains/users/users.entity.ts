@@ -1,7 +1,14 @@
 import { Exclude } from 'class-transformer';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, BeforeInsert } from 'typeorm';
-import { Role } from './role.entity';
+import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
+
+export enum UserRole {
+  USER = 'USER',
+  TECHNICIAN = 'TECHNICIAN',
+  ORGANIZER = 'ORGANIZER',
+  INSTRUCTOR = 'INSTRUCTOR',
+  ADMINISTRATOR = 'ADMINISTRATOR',
+}
 
 @Entity()
 export class User {
@@ -21,18 +28,22 @@ export class User {
   @Exclude()
   password: string;
 
-  @ManyToOne(() => Role, (role) => role.users)
-  role: Role;
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
   @Column({ default: false })
-  removed: boolean;
+  @Exclude()
+  removed?: boolean;
 
-  @Column()
-  created_at: Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt?: Date;
 
   @BeforeInsert()
-  async setCreatedAt(): Promise<void> {
+  async setCreatedAt?(): Promise<void> {
     this.password = await bcrypt.hash(this.password, 10);
-    this.created_at = new Date();
   }
 }
