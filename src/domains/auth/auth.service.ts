@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/users.entity';
@@ -15,11 +16,15 @@ import { LoginDto } from './dto/login.dto';
 import { RpcException } from '@nestjs/microservices';
 import { JwtObject } from './jwt-object.interface';
 import { VerifyDto } from './dto/verify.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
   @InjectRepository(User)
   private readonly usersRepository: Repository<User>;
+
+  @Inject(forwardRef(() => UsersService))
+  private readonly usersService: UsersService;
 
   @Inject(AuthHelper)
   private readonly helper: AuthHelper;
@@ -58,9 +63,7 @@ export class AuthService {
   }
 
   public async verify(body: VerifyDto): Promise<string> {
-    const token: string | undefined = this.helper.extractToken(body.token);
-
-    if (!token) throw new RpcException(new BadRequestException('No token provided!'));
+    const token: string = this.helper.extractToken(body.token);
 
     const tokenObject: JwtObject = this.helper.decodeToken(token);
 
@@ -74,5 +77,17 @@ export class AuthService {
     if (user.role !== body.role) throw new RpcException(new ForbiddenException('Forbidden access!'));
 
     return tokenObject.id;
+  }
+
+  public async findOne(token: string): Promise<User> {
+    if (!/^Bearer .+$/.test(token)) {
+      throw new RpcException(new BadRequestException('Invalid JWT'));
+    }
+
+    const tokenObject: JwtObject = this.helper.decodeToken(this.helper.extractToken(token));
+
+    const user: User = await this.usersService.findOne(tokenObject.id);
+
+    return user;
   }
 }

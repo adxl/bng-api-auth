@@ -1,50 +1,32 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User, UserRole } from './users.entity';
+import { User } from './users.entity';
 import { Repository } from 'typeorm';
-import { UpdateUserDto } from './dto/update-profile.dto';
 import { RpcException } from '@nestjs/microservices';
-import { UpdateUserRoleDto } from './dto/update-role.dto';
-import { FindOneOrRemoveDto } from './dto/find-one-or-remove.dto';
+import { RemoveDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
 import { AuthService } from '../auth/auth.service';
 import { AuthHelper } from '../auth/auth.helper';
-import { JwtObject } from '../auth/jwt-object.interface';
-import { UpdatePasswordDto } from './dto/update-password.dto';
 
 @Injectable()
 export class UsersService {
   @InjectRepository(User)
   private readonly userRepository: Repository<User>;
 
-  @Inject(AuthService)
+  @Inject(forwardRef(() => AuthService))
   private readonly authService: AuthService;
 
   @Inject(AuthHelper)
   private readonly helper: AuthHelper;
 
-  public async findAll(token: string): Promise<User[]> {
-    const reqUser: string | undefined = await this.authService.verify({
-      token,
-      role: UserRole.ADMINISTRATOR,
-    });
-
-    if (!reqUser) throw new RpcException(new ForbiddenException('Access forbidden!'));
-
-    const users: User[] | null = await this.userRepository.find({
+  public async findAll(): Promise<User[]> {
+    return this.userRepository.find({
       where: { removed: false },
     });
-
-    if (!users) throw new RpcException(new NotFoundException('No users found!'));
-
-    return users;
   }
 
-  public async findOne(body: FindOneOrRemoveDto): Promise<User> {
+  public async findOne(id: string): Promise<User> {
     const user: User | null = await this.userRepository.findOne({
-      where: {
-        id: body.id,
-        removed: false,
-      },
+      where: { id, removed: false },
     });
 
     if (!user) throw new RpcException(new NotFoundException('User not found!'));
@@ -53,95 +35,36 @@ export class UsersService {
   }
 
   public async updatePassword(body: UpdatePasswordDto): Promise<object> {
-    const token: string | undefined = this.helper.extractToken(body.token);
+    const user: User = await this.authService.findOne(body.jwt.token);
 
-    if (!token) throw new RpcException(new BadRequestException('No token provided!'));
-
-    const reqUser: JwtObject = this.helper.decodeToken(token);
-
-    const user: User | null = await this.userRepository.findOneBy({
-      id: reqUser.id,
-      removed: false,
-    });
-
-    if (!user || !this.helper.validPwd(user, body.oldPwd))
+    if (!this.helper.validPwd(user, body.oldPwd)) {
       throw new RpcException(new NotFoundException('User not found!'));
+    }
 
-    user.password = await this.helper.hashPwd(body.newPwd);
+    user.password = await this.helper.hashPwd(body.password);
 
-    await this.userRepository.save(user);
-
-    return { statusCode: 200, message: 'User updated succesfully' };
+    return this.userRepository.update(user.id, user);
   }
 
-  public async updateProfile(body: UpdateUserDto): Promise<object> {
-    const token: string | undefined = this.helper.extractToken(body.token);
+  public async updateProfile(body: UpdateProfileDto): Promise<object> {
+    const user: User = await this.authService.findOne(body.jwt.token);
 
-    if (!token) throw new RpcException(new BadRequestException('No token provided!'));
-
-    const reqUser: JwtObject = this.helper.decodeToken(token);
-
-    const user: User | null = await this.userRepository.findOneBy({
-      id: reqUser.id,
-      removed: false,
-    });
-
-    if (!user) throw new RpcException(new NotFoundException('User not found!'));
-
-    if (body.firstName && body.firstName?.length > 0) user.firstName = body.firstName;
-
-    if (body.lastName && body.lastName?.length > 0) user.lastName = body.lastName;
-
-    await this.userRepository.save(user);
-
-    return { statusCode: 200, message: 'User updated succesfully' };
+    return this.userRepository.update(user.id, body);
   }
 
-  public async updateRole(body: UpdateUserRoleDto): Promise<object> {
-    const reqUser: string | undefined = await this.authService.verify({
-      token: body.token,
-      role: UserRole.ADMINISTRATOR,
-    });
-
-    if (!reqUser) throw new RpcException(new ForbiddenException('Access forbidden!'));
-
-    const user: User | null = await this.userRepository.findOne({
-      where: {
-        id: body.id,
-        removed: false,
-      },
-    });
-
-    if (!user) throw new RpcException(new NotFoundException('User not found'));
-
-    user.role = body.role;
-
-    await this.userRepository.save(user);
-
-    return { statusCode: 200, message: 'User updated succesfully' };
+  public async updateRole(body: UpdateRoleDto): Promise<object> {
+    return this.userRepository.update(body.id, { role: body.role });
   }
 
-  public async remove(body: FindOneOrRemoveDto): Promise<object> {
-    const reqUser: string | undefined = await this.authService.verify({
-      token: body.token,
-      role: UserRole.ADMINISTRATOR,
-    });
+  public async remove(body: RemoveDto): Promise<object> {
+    const user: User = await this.findOne(body.id);
 
-    if (!reqUser) throw new RpcException(new ForbiddenException('Access forbidden!'));
-
-    const user: User | null = await this.userRepository.findOne({
-      where: {
-        id: body.id,
-        removed: false,
-      },
-    });
-
-    if (!user) throw new RpcException(new NotFoundException('User not found or already removed!'));
-
+    user.password = null;
+    user.email = null;
+    user.firstName = null;
+    user.lastName = null;
     user.removed = true;
 
-    await this.userRepository.save(user);
-
-    return { statusCode: 200, message: 'User' };
+    return this.userRepository.update(user.id, user);
   }
 }

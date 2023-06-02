@@ -5,6 +5,6 @@ export class VerifyDto {
   @IsString()
   token: string;
 
-  @IsEnum(UserRole, { each: true })
+  @IsEnum(UserRole)
   role: UserRole;
 }

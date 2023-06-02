@@ -1,10 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/users.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { JwtObject } from './jwt-object.interface';
+import { RpcException } from '@nestjs/microservices';
 
 // Helper class for authentication
 @Injectable()
@@ -52,8 +53,13 @@ export class AuthHelper {
     return true;
   }
 
-  public extractToken(reqToken: string): string | undefined {
-    const [type, token] = reqToken.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+  public extractToken(reqToken: string): string {
+    const [type, token] = reqToken.split(/\s/) ?? [];
+
+    if (type !== 'Bearer') {
+      throw new RpcException(new BadRequestException('No token provided!'));
+    }
+
+    return token;
   }
 }

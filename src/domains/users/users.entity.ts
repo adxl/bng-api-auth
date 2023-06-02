@@ -5,7 +5,7 @@ import * as bcrypt from 'bcryptjs';
 export enum UserRole {
   USER = 'USER',
   TECHNICIAN = 'TECHNICIAN',
-  HOST = 'HOST',
+  ORGANIZER = 'ORGANIZER',
   INSTRUCTOR = 'INSTRUCTOR',
   ADMINISTRATOR = 'ADMINISTRATOR',
 }
@@ -37,14 +37,13 @@ export class User {
 
   @Column({ default: false })
   @Exclude()
-  removed: boolean;
+  removed?: boolean;
 
-  @Column()
-  created_at: Date;
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt?: Date;
 
   @BeforeInsert()
-  async setCreatedAt(): Promise<void> {
+  async setCreatedAt?(): Promise<void> {
     this.password = await bcrypt.hash(this.password, 10);
-    this.created_at = new Date();
   }
 }
