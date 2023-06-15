@@ -26,4 +26,9 @@ export class AuthController {
   public verify(body: VerifyDto): Promise<string> {
     return this.authService.verify(body);
   }
+
+  @EventPattern('auth.me')
+  public findOneByToken(token: string): Promise<User> {
+    return this.authService.findOne(token);
+  }
 }
