@@ -5,6 +5,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { User } from '../users/users.entity';
 import { VerifyDto } from './dto/verify.dto';
+import { RequestToken } from 'src/types/token';
 
 @Controller()
 export class AuthController {
@@ -28,7 +29,8 @@ export class AuthController {
   }
 
   @EventPattern('auth.me')
-  public findOneByToken(token: string): Promise<User> {
-    return this.authService.findOne(token);
+  @UseInterceptors(ClassSerializerInterceptor)
+  public me(jwt: RequestToken): Promise<User> {
+    return this.authService.findOne(jwt.token);
   }
 }
