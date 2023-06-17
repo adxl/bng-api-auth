@@ -3,48 +3,51 @@ import { faker } from '@faker-js/faker';
 
 export const admins: User[] = [
   {
-    id: '33c7f28e-bab3-439d-965d-0522568b0ec6',
+    id: 'c63a4bd1-cabd-44ee-b911-9ee2533dd000',
     firstName: 'Adel',
-    lastName: 'S',
+    lastName: 'Sen',
     email: 'adel@bng.fr',
     password: 'password',
     role: UserRole.ADMINISTRATOR,
   },
   {
-    id: '33c7f28e-bab3-439d-965d-0522568b0ec7',
+    id: 'c63a4bd1-cabd-44ee-b911-9ee2533dd001',
     firstName: 'Coraline',
-    lastName: 'E',
+    lastName: 'Esedji',
     email: 'coraline@bng.fr',
     password: 'password',
     role: UserRole.ADMINISTRATOR,
   },
   {
-    id: '33c7f28e-bab3-439d-965d-0522568b0ec8',
+    id: 'c63a4bd1-cabd-44ee-b911-9ee2533dd002',
     firstName: 'Océane',
-    lastName: 'R',
+    lastName: 'Renoux',
     email: 'oceane@bng.fr',
     password: 'password',
     role: UserRole.ADMINISTRATOR,
   },
   {
-    id: '33c7f28e-bab3-439d-965d-0522568b0ec9',
+    id: 'c63a4bd1-cabd-44ee-b911-9ee2533dd003',
     firstName: 'Thomas',
-    lastName: 'G',
+    lastName: 'Geoffron',
     email: 'thomas@bng.fr',
     password: 'password',
     role: UserRole.ADMINISTRATOR,
   },
 ];
 
-export const users: User[] = Array.from({
-  length: 25,
-}).map(() => {
-  return {
-    id: faker.string.uuid(),
-    firstName: faker.person.firstName(),
-    lastName: faker.person.lastName(),
-    email: faker.internet.email(),
-    password: 'password',
-    role: faker.helpers.arrayElement(Object.values(UserRole).filter((role) => role != UserRole.ADMINISTRATOR)),
-  };
-});
+const userRoles: UserRole[] = [
+  ...Array(2).fill(UserRole.INSTRUCTOR),
+  ...Array(3).fill(UserRole.ORGANIZER),
+  ...Array(5).fill(UserRole.TECHNICIAN),
+  ...Array(20).fill(UserRole.USER),
+];
+
+export const users: User[] = userRoles.map((role, index) => ({
+  id: `c63a4bd1-cabd-44ee-b911-9ee2533dd0${String(index + 4).padStart(2, '0')}`,
+  firstName: faker.person.firstName(),
+  lastName: faker.person.lastName(),
+  email: `${role}.${index + 4}@bng.fr`.toLowerCase(),
+  password: 'password',
+  role,
+}));
