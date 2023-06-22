@@ -1,8 +1,11 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsOptional, IsUUID, ValidateNested } from 'class-validator';
+import { TokenDto } from 'src/domains/users/users.dto';
 
 export class RequestToken {
-  @IsString()
-  token: string;
+  @ValidateNested()
+  @Type(() => TokenDto)
+  jwt: TokenDto;
 
   @IsUUID()
   @IsOptional()

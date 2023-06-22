@@ -11,12 +11,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/users.entity';
 import { Repository } from 'typeorm';
 import { AuthHelper } from './auth.helper';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterDtoWrapper } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RpcException } from '@nestjs/microservices';
 import { JwtObject } from './jwt-object.interface';
 import { VerifyDto } from './dto/verify.dto';
 import { UsersService } from '../users/users.service';
+import * as md5 from 'md5';
+import { MailerHelper } from 'src/helpers/mailer.helper';
 
 @Injectable()
 export class AuthService {
@@ -29,14 +31,21 @@ export class AuthService {
   @Inject(AuthHelper)
   private readonly helper: AuthHelper;
 
-  public async register(data: RegisterDto): Promise<User> {
+  @Inject(MailerHelper)
+  private readonly mailerHelper: MailerHelper;
+
+  public async register(data: RegisterDtoWrapper): Promise<User> {
     const user: User | null = await this.usersRepository.findOneBy({
-      email: data.email,
+      email: data.body.email,
     });
 
     if (user) throw new RpcException(new BadRequestException('Email already exists'));
 
-    const newUser: User = this.usersRepository.create(data);
+    const newUser: User = this.usersRepository.create(data.body);
+
+    newUser.password = md5(data.body.email);
+
+    // this.mailerHelper.sendUserCreationEmail(newUser.email, newUser.password);
 
     this.usersRepository.insert(newUser);
 
@@ -63,7 +72,7 @@ export class AuthService {
   }
 
   public async verify(body: VerifyDto): Promise<string> {
-    const token: string = this.helper.extractToken(body.token);
+    const token: string = this.helper.extractToken(body.jwt.token);
 
     const tokenObject: JwtObject = this.helper.decodeToken(token);
 

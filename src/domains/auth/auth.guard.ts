@@ -13,7 +13,7 @@ export const AuthGuard = (roles: Array<UserRole | '*'>) => {
     ) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
-      const jwt: TokenDto = context.switchToHttp().getRequest();
+      const jwt: TokenDto = context.switchToHttp().getRequest().jwt;
 
       const user: User = await this.authService.findOne(jwt.token);
 

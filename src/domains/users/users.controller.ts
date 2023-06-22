@@ -12,7 +12,7 @@ export class UsersController {
   private readonly userService: UsersService;
 
   @EventPattern('users.findAll')
-  @UseGuards(AuthGuard([UserRole.ADMINISTRATOR]))
+  @UseGuards(AuthGuard([UserRole.ADMINISTRATOR, UserRole.ORGANIZER]))
   @UseInterceptors(ClassSerializerInterceptor)
   public findAll(): Promise<User[]> {
     return this.userService.findAll();

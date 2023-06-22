@@ -59,10 +59,10 @@ export class UsersService {
   public async remove(body: RemoveDto): Promise<object> {
     const user: User = await this.findOne(body.id);
 
-    user.password = null;
-    user.email = null;
-    user.firstName = null;
-    user.lastName = null;
+    user.password = '';
+    user.email = user.id; // Else unique constraint error
+    user.firstName = '';
+    user.lastName = '';
     user.removed = true;
 
     return this.userRepository.update(user.id, user);

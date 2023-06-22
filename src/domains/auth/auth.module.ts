@@ -9,6 +9,7 @@ import { AuthHelper } from './auth.helper';
 import { JwtStrategy } from './auth.strategy';
 import { User } from 'src/domains/users/users.entity';
 import { UsersService } from '../users/users.service';
+import { MailerHelper } from 'src/helpers/mailer.helper';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { UsersService } from '../users/users.service';
     TypeOrmModule.forFeature([User]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthHelper, JwtStrategy, ConfigService, UsersService],
+  providers: [AuthService, AuthHelper, JwtStrategy, ConfigService, UsersService, MailerHelper],
   exports: [AuthService],
 })
 export class AuthModule {}

@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthHelper } from 'src/domains/auth/auth.helper';
 import { JwtStrategy } from 'src/domains/auth/auth.strategy';
 import { AuthService } from '../auth/auth.service';
+import { MailerHelper } from 'src/helpers/mailer.helper';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { AuthService } from '../auth/auth.service';
     }),
     TypeOrmModule.forFeature([User]),
   ],
-  providers: [UsersService, AuthHelper, JwtStrategy, ConfigService, AuthService],
+  providers: [UsersService, AuthHelper, JwtStrategy, ConfigService, AuthService, MailerHelper],
   controllers: [UsersController],
 })
 export class UsersModule {}

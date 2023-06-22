@@ -1,11 +1,12 @@
-import { ClassSerializerInterceptor, Controller, Inject, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Inject, UseGuards, UseInterceptors } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
+import { RegisterDtoWrapper } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { User } from '../users/users.entity';
+import { User, UserRole } from '../users/users.entity';
 import { VerifyDto } from './dto/verify.dto';
 import { RequestToken } from 'src/types/token';
+import { AuthGuard } from './auth.guard';
 
 @Controller()
 export class AuthController {
@@ -14,7 +15,8 @@ export class AuthController {
 
   @EventPattern('auth.register')
   @UseInterceptors(ClassSerializerInterceptor)
-  public register(data: RegisterDto): Promise<User> {
+  @UseGuards(AuthGuard([UserRole.ADMINISTRATOR]))
+  public register(data: RegisterDtoWrapper): Promise<User> {
     return this.authService.register(data);
   }
 
@@ -30,7 +32,7 @@ export class AuthController {
 
   @EventPattern('auth.me')
   @UseInterceptors(ClassSerializerInterceptor)
-  public me(jwt: RequestToken): Promise<User> {
-    return this.authService.findOne(jwt.token);
+  public me(body: RequestToken): Promise<User> {
+    return this.authService.findOne(body.jwt.token);
   }
 }
