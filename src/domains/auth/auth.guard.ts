@@ -17,7 +17,7 @@ export const AuthGuard = (roles: Array<UserRole | '*'>) => {
 
       const user: User = await this.authService.findOne(jwt.token);
 
-      if (roles.includes('*') || !roles.includes(user.role)) {
+      if (!roles.includes('*') && !roles.includes(user.role)) {
         throw new RpcException(new ForbiddenException());
       }
 

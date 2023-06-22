@@ -49,6 +49,8 @@ export class UsersService {
   public async updateProfile(body: UpdateProfileDto): Promise<object> {
     const user: User = await this.authService.findOne(body.jwt.token);
 
+    delete body.jwt;
+
     return this.userRepository.update(user.id, body);
   }
 
