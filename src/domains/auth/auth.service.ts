@@ -45,7 +45,7 @@ export class AuthService {
 
     newUser.password = md5(data.body.email);
 
-    // this.mailerHelper.sendUserCreationEmail(newUser.email, newUser.password);
+    this.mailerHelper.sendUserCreationEmail(newUser.email, newUser.password);
 
     this.usersRepository.insert(newUser);
 

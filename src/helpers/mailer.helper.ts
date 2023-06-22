@@ -8,7 +8,7 @@ export class MailerHelper {
 
   public async sendUserCreationEmail(email: string, password: string): Promise<void> {
     await this.mailerService.sendMail({
-      from: 'no-reply@bng.fr',
+      from: 'supp.myschool@outlook.fr',
       to: email,
       subject: "Bienvenue sur Board N' Go",
       html:

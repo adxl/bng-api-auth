@@ -7,6 +7,8 @@ import { RemoveDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from '.
 import { AuthService } from '../auth/auth.service';
 import { AuthHelper } from '../auth/auth.helper';
 
+import * as md5 from 'md5';
+
 @Injectable()
 export class UsersService {
   @InjectRepository(User)
@@ -61,10 +63,9 @@ export class UsersService {
   public async remove(body: RemoveDto): Promise<object> {
     const user: User = await this.findOne(body.id);
 
-    user.password = '';
-    user.email = user.id; // Else unique constraint error
-    user.firstName = '';
-    user.lastName = '';
+    user.email = md5(user.id) + '@bng-removed.com';
+    user.firstName = null;
+    user.lastName = null;
     user.removed = true;
 
     return this.userRepository.update(user.id, user);
