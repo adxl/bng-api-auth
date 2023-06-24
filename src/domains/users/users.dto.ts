@@ -1,5 +1,6 @@
 import {
   IsAlpha,
+  IsEmail,
   IsEnum,
   IsOptional,
   IsString,
@@ -14,6 +15,30 @@ import { Type } from 'class-transformer';
 export class TokenDto {
   @IsString()
   token: string;
+}
+
+export class CreateDto {
+  @IsAlpha()
+  firstName: string;
+
+  @IsAlpha()
+  lastName: string;
+
+  @IsEmail()
+  email: string;
+
+  @IsEnum(UserRole)
+  role: UserRole;
+}
+
+export class CreateDtoWrapper {
+  @ValidateNested()
+  @Type(() => CreateDto)
+  body: CreateDto;
+
+  @ValidateNested()
+  @Type(() => TokenDto)
+  jwt: TokenDto;
 }
 
 export class FindOneDto {

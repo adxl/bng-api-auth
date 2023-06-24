@@ -3,7 +3,14 @@ import { UsersService } from './users.service';
 import { EventPattern } from '@nestjs/microservices';
 import { User, UserRole } from './users.entity';
 
-import { FindOneDto, RemoveDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
+import {
+  CreateDtoWrapper,
+  FindOneDto,
+  RemoveDto,
+  UpdatePasswordDto,
+  UpdateProfileDto,
+  UpdateRoleDto,
+} from './users.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
 @Controller()
@@ -23,6 +30,13 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   public findOne(body: FindOneDto): Promise<User> {
     return this.userService.findOne(body.id);
+  }
+
+  @EventPattern('users.create')
+  @UseGuards(AuthGuard([UserRole.ADMINISTRATOR]))
+  @UseInterceptors(ClassSerializerInterceptor)
+  public create(body: CreateDtoWrapper): Promise<User> {
+    return this.userService.create(body);
   }
 
   @EventPattern('users.updatePassword')

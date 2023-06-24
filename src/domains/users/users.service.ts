@@ -1,13 +1,14 @@
-import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { Repository } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
-import { RemoveDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
+import { CreateDtoWrapper, RemoveDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
 import { AuthService } from '../auth/auth.service';
 import { AuthHelper } from '../auth/auth.helper';
 
 import * as md5 from 'md5';
+import { MailerHelper } from 'src/helpers/mailer.helper';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,9 @@ export class UsersService {
 
   @Inject(AuthHelper)
   private readonly helper: AuthHelper;
+
+  @Inject(MailerHelper)
+  private readonly mailerHelper: MailerHelper;
 
   public async findAll(): Promise<User[]> {
     return this.userRepository.find({
@@ -34,6 +38,24 @@ export class UsersService {
     if (!user) throw new RpcException(new NotFoundException('User not found!'));
 
     return user;
+  }
+
+  public async create(data: CreateDtoWrapper): Promise<User> {
+    const user: User | null = await this.userRepository.findOneBy({
+      email: data.body.email,
+    });
+
+    if (user) throw new RpcException(new BadRequestException('Email already exists'));
+
+    const newUser: User = this.userRepository.create(data.body);
+
+    newUser.password = md5(data.body.email);
+
+    this.mailerHelper.sendUserCreationEmail(newUser.email, newUser.password);
+
+    this.userRepository.insert(newUser);
+
+    return newUser;
   }
 
   public async updatePassword(body: UpdatePasswordDto): Promise<object> {
