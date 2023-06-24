@@ -1,7 +1,7 @@
 import { ClassSerializerInterceptor, Controller, Inject, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { EventPattern } from '@nestjs/microservices';
-import { User, UserRole } from './users.entity';
+import { User } from './users.entity';
 
 import {
   CreateDtoWrapper,
@@ -11,7 +11,7 @@ import {
   UpdateProfileDto,
   UpdateRoleDto,
 } from './users.dto';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard, RolesGuard } from '../auth/auth.guard';
 
 @Controller()
 export class UsersController {
@@ -19,14 +19,14 @@ export class UsersController {
   private readonly userService: UsersService;
 
   @EventPattern('users.findAll')
-  @UseGuards(AuthGuard([UserRole.ADMINISTRATOR, UserRole.ORGANIZER]))
+  @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR, UserRole.ORGANIZER]))
   @UseInterceptors(ClassSerializerInterceptor)
   public findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
 
   @EventPattern('users.findOne')
-  @UseGuards(AuthGuard(['*']))
+  @UseGuards(AuthGuard, new RolesGuard('*'))
   @UseInterceptors(ClassSerializerInterceptor)
   public findOne(body: FindOneDto): Promise<User> {
     return this.userService.findOne(body.id);
@@ -40,25 +40,25 @@ export class UsersController {
   }
 
   @EventPattern('users.updatePassword')
-  @UseGuards(AuthGuard(['*']))
+  @UseGuards(AuthGuard, new RolesGuard('*'))
   public updatePassword(body: UpdatePasswordDto): Promise<object> {
     return this.userService.updatePassword(body);
   }
 
   @EventPattern('users.updateProfile')
-  @UseGuards(AuthGuard(['*']))
+  @UseGuards(AuthGuard, new RolesGuard('*'))
   public updateProfile(body: UpdateProfileDto): Promise<object> {
     return this.userService.updateProfile(body);
   }
 
   @EventPattern('users.updateRole')
-  @UseGuards(AuthGuard([UserRole.ADMINISTRATOR]))
+  @UseGuards(AuthGuard, new RolesGuard('*'))
   public updateRole(body: UpdateRoleDto): Promise<object> {
     return this.userService.updateRole(body);
   }
 
   @EventPattern('users.remove')
-  @UseGuards(AuthGuard([UserRole.ADMINISTRATOR]))
+  @UseGuards(AuthGuard, new RolesGuard('*'))
   public remove(body: RemoveDto): Promise<object> {
     return this.userService.remove(body);
   }

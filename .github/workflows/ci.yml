@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Tests
-        run: npm run test
+        run: npm run test:cov
 
   publish:
     needs: build

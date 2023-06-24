@@ -1,7 +1,7 @@
+import { IsArray, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { IsArray, ValidateNested } from 'class-validator';
-import { TokenDto } from 'src/domains/users/users.dto';
-import { UserRole } from 'src/domains/users/users.entity';
+import { UserRole } from '../../users/users.entity';
+import { TokenDto } from '../../users/users.dto';
 
 export class VerifyDto {
   @ValidateNested()
@@ -9,5 +9,5 @@ export class VerifyDto {
   jwt: TokenDto;
 
   @IsArray()
-  roles: Array<UserRole | '*'>;
+  roles: UserRole[] | '*';
 }

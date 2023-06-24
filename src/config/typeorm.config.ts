@@ -1,7 +1,7 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from 'src/domains/users/users.entity';
+import { User } from '../domains/users/users.entity';
 
-const IS_LOCAL: boolean = process.env.STAGE === 'local';
+const IS_LOCAL: boolean = process.env.STAGE === 'local' || process.env.STAGE === 'test';
 
 export const TypeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',

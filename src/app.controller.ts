@@ -7,7 +7,7 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @EventPattern('index')
-  getIndex(): string {
+  index(): string {
     return this.appService.index();
   }
 

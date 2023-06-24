@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthHelper } from './auth.helper';
 import { JwtStrategy } from './auth.strategy';
-import { User } from 'src/domains/users/users.entity';
+import { User } from '../users/users.entity';
 import { UsersService } from '../users/users.service';
 import { MailerHelper } from 'src/helpers/mailer.helper';
 

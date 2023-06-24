@@ -5,7 +5,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { User } from '../users/users.entity';
 import { VerifyDto } from './dto/verify.dto';
-import { RequestToken } from 'src/types/token';
+import { RequestToken } from '../../types/token';
 
 @Controller()
 export class AuthController {

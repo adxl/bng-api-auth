@@ -1,9 +1,9 @@
 import { INestMicroservice } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './../app.controller';
-import { AppService } from './../app.service';
-import { TypeOrmConfig } from './../config/typeorm.config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { TypeOrmConfig } from './config/typeorm.config';
 
 import { bootstrap } from './main';
 import { AuthModule } from './domains/auth/auth.module';

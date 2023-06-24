@@ -4,7 +4,7 @@ import { RpcException } from '@nestjs/microservices';
 @Injectable()
 export class AppService {
   index(): string {
-    return 'Auth API';
+    return 'Welcome to Auth API';
   }
 
   kill(): void {

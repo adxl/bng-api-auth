@@ -5,9 +5,10 @@ import { User } from './users.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthHelper } from 'src/domains/auth/auth.helper';
-import { JwtStrategy } from 'src/domains/auth/auth.strategy';
+import { AuthHelper } from '../auth/auth.helper';
+import { JwtStrategy } from '../auth/auth.strategy';
 import { AuthService } from '../auth/auth.service';
+import { AuthGuard } from '../auth/auth.guard';
 import { MailerHelper } from 'src/helpers/mailer.helper';
 
 @Module({
@@ -21,7 +22,7 @@ import { MailerHelper } from 'src/helpers/mailer.helper';
     }),
     TypeOrmModule.forFeature([User]),
   ],
-  providers: [UsersService, AuthHelper, JwtStrategy, ConfigService, AuthService, MailerHelper],
+  providers: [UsersService, AuthHelper, JwtStrategy, ConfigService, AuthService, MailerHelper, AuthGuard],
   controllers: [UsersController],
 })
 export class UsersModule {}
