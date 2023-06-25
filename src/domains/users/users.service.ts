@@ -1,14 +1,15 @@
 import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
 import { CreateDtoWrapper, RemoveDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
 import { AuthService } from '../auth/auth.service';
 import { AuthHelper } from '../auth/auth.helper';
+import { MailerHelper } from '../../helpers/mailer.helper';
 
 import * as md5 from 'md5';
-import { MailerHelper } from 'src/helpers/mailer.helper';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -58,7 +59,7 @@ export class UsersService {
     return newUser;
   }
 
-  public async updatePassword(body: UpdatePasswordDto): Promise<object> {
+  public async updatePassword(body: UpdatePasswordDto): Promise<UpdateResult> {
     const user: User = await this.authService.findOne(body.jwt.token);
 
     if (!this.helper.validPwd(user, body.oldPwd)) {
@@ -70,7 +71,7 @@ export class UsersService {
     return this.userRepository.update(user.id, user);
   }
 
-  public async updateProfile(body: UpdateProfileDto): Promise<object> {
+  public async updateProfile(body: UpdateProfileDto): Promise<UpdateResult> {
     const user: User = await this.authService.findOne(body.jwt.token);
 
     delete body.jwt;
@@ -78,14 +79,15 @@ export class UsersService {
     return this.userRepository.update(user.id, body);
   }
 
-  public async updateRole(body: UpdateRoleDto): Promise<object> {
+  public async updateRole(body: UpdateRoleDto): Promise<UpdateResult> {
     return this.userRepository.update(body.id, { role: body.role });
   }
 
-  public async remove(body: RemoveDto): Promise<object> {
+  public async remove(body: RemoveDto): Promise<DeleteResult> {
     const user: User = await this.findOne(body.id);
 
     user.email = md5(user.id) + '@bng-removed.com';
+    user.password = bcrypt.hashSync(md5(user.id));
     user.firstName = null;
     user.lastName = null;
     user.removed = true;

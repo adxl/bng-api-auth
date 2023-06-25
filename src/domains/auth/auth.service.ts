@@ -74,7 +74,7 @@ export class AuthService {
 
     if (!user) throw new RpcException(new UnauthorizedException('User unauthorized!'));
 
-    if (!body.roles.includes(user.role) && !body.roles.includes('*'))
+    if (body.roles !== '*' && !body.roles.includes(user.role))
       throw new RpcException(new ForbiddenException('Forbidden access!'));
 
     return tokenObject.id;

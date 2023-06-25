@@ -9,7 +9,7 @@ import { AuthHelper } from './auth.helper';
 import { JwtStrategy } from './auth.strategy';
 import { User } from '../users/users.entity';
 import { UsersService } from '../users/users.service';
-import { MailerHelper } from 'src/helpers/mailer.helper';
+import { MailerHelper } from '../../helpers/mailer.helper';
 
 @Module({
   imports: [

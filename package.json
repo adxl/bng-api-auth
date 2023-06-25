@@ -56,8 +56,8 @@
     "@types/jest": "29.2.4",
     "@types/md5": "^2.3.2",
     "@types/node": "18.11.18",
-    "@types/passport-jwt": "^3.0.8",
     "@types/nodemailer": "^6.4.8",
+    "@types/passport-jwt": "^3.0.8",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
@@ -89,6 +89,9 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "modulePathIgnorePatterns": [
+      "fixtures"
+    ]
   }
 }

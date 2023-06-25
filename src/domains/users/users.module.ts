@@ -9,7 +9,7 @@ import { AuthHelper } from '../auth/auth.helper';
 import { JwtStrategy } from '../auth/auth.strategy';
 import { AuthService } from '../auth/auth.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { MailerHelper } from 'src/helpers/mailer.helper';
+import { MailerHelper } from '../../helpers/mailer.helper';
 
 @Module({
   imports: [
@@ -24,5 +24,6 @@ import { MailerHelper } from 'src/helpers/mailer.helper';
   ],
   providers: [UsersService, AuthHelper, JwtStrategy, ConfigService, AuthService, MailerHelper, AuthGuard],
   controllers: [UsersController],
+  exports: [AuthHelper, MailerHelper],
 })
 export class UsersModule {}

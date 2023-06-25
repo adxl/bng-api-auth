@@ -8,6 +8,7 @@ import { TypeOrmConfig } from './config/typeorm.config';
 import { bootstrap } from './main';
 import { AuthModule } from './domains/auth/auth.module';
 import { UsersModule } from './domains/users/users.module';
+import { AppModule } from './app.module';
 
 describe('Tests entrypoint', () => {
   let appController: AppController;
@@ -15,7 +16,7 @@ describe('Tests entrypoint', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [TypeOrmModule.forRoot(TypeOrmConfig), UsersModule, AuthModule],
+      imports: [TypeOrmModule.forRoot(TypeOrmConfig), AppModule, UsersModule, AuthModule],
       providers: [AppService],
       controllers: [AppController],
     }).compile();

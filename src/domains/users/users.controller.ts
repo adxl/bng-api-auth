@@ -1,7 +1,7 @@
 import { ClassSerializerInterceptor, Controller, Inject, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { EventPattern } from '@nestjs/microservices';
-import { User } from './users.entity';
+import { User, UserRole } from './users.entity';
 
 import {
   CreateDtoWrapper,
@@ -12,6 +12,7 @@ import {
   UpdateRoleDto,
 } from './users.dto';
 import { AuthGuard, RolesGuard } from '../auth/auth.guard';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller()
 export class UsersController {
@@ -33,7 +34,7 @@ export class UsersController {
   }
 
   @EventPattern('users.create')
-  @UseGuards(AuthGuard([UserRole.ADMINISTRATOR]))
+  @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR]))
   @UseInterceptors(ClassSerializerInterceptor)
   public create(body: CreateDtoWrapper): Promise<User> {
     return this.userService.create(body);
@@ -41,25 +42,25 @@ export class UsersController {
 
   @EventPattern('users.updatePassword')
   @UseGuards(AuthGuard, new RolesGuard('*'))
-  public updatePassword(body: UpdatePasswordDto): Promise<object> {
+  public updatePassword(body: UpdatePasswordDto): Promise<UpdateResult> {
     return this.userService.updatePassword(body);
   }
 
   @EventPattern('users.updateProfile')
   @UseGuards(AuthGuard, new RolesGuard('*'))
-  public updateProfile(body: UpdateProfileDto): Promise<object> {
+  public updateProfile(body: UpdateProfileDto): Promise<UpdateResult> {
     return this.userService.updateProfile(body);
   }
 
   @EventPattern('users.updateRole')
   @UseGuards(AuthGuard, new RolesGuard('*'))
-  public updateRole(body: UpdateRoleDto): Promise<object> {
+  public updateRole(body: UpdateRoleDto): Promise<UpdateResult> {
     return this.userService.updateRole(body);
   }
 
   @EventPattern('users.remove')
   @UseGuards(AuthGuard, new RolesGuard('*'))
-  public remove(body: RemoveDto): Promise<object> {
+  public remove(body: RemoveDto): Promise<DeleteResult> {
     return this.userService.remove(body);
   }
 }
