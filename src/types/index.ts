@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsOptional, IsString, IsUUID, ValidateNested } from 'class-validator';
 import { User, UserRole } from '../domains/users/users.entity';
 
 export class RequestPayload {
@@ -7,8 +7,9 @@ export class RequestPayload {
   @IsOptional()
   id?: string;
 
-  @IsUUID(4, { each: true })
   @IsOptional()
+  @IsUUID(4, { each: true })
+  @ArrayNotEmpty()
   ids?: string[];
 
   @IsString()
