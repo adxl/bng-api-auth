@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { RegisterPayload } from './dto/register.dto';
 import { LoginPayload } from './dto/login.dto';
 import { User } from '../users/users.entity';
-import { RequestPayload } from 'src/types';
+import { RequestPayload } from '../../types';
 
 @Controller()
 export class AuthController {

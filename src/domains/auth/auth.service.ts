@@ -16,7 +16,7 @@ import { LoginDto } from './dto/login.dto';
 import { RpcException } from '@nestjs/microservices';
 import { JwtObject } from './jwt-object.interface';
 import { UsersService } from '../users/users.service';
-import { RequestPayload } from 'src/types';
+import { RequestPayload } from '../../types';
 
 @Injectable()
 export class AuthService {

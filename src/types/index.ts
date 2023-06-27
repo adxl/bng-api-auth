@@ -22,5 +22,5 @@ export class RequestPayload {
   @IsOptional()
   @ValidateNested()
   @Type(() => User)
-  user: User;
+  user?: User;
 }

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsAlpha, IsEmail, IsNotEmptyObject, Length, ValidateNested } from 'class-validator';
-import { RequestPayload } from 'src/types';
+import { RequestPayload } from '../../../types';
 
 export class RegisterDto {
   @IsAlpha()

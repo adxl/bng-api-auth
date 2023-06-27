@@ -13,7 +13,7 @@ import { UsersService } from './users.service';
 
 describe('Tests users', () => {
   let usersController: UsersController;
-  let jwt = null;
+  let token = '';
   // let mailerService: DeepMocked<MailerService>;
 
   beforeEach(async () => {
@@ -36,7 +36,7 @@ describe('Tests users', () => {
       controllers: [UsersController],
     }).compile();
 
-    jwt = { token: 'Bearer ' + module.get(JwtService).sign({ id: '163a4bd1-cabd-44ee-b911-9ee2533dd000' }) };
+    token = 'Bearer ' + module.get(JwtService).sign({ id: '163a4bd1-cabd-44ee-b911-9ee2533dd000' });
     usersController = module.get(UsersController);
   });
 
@@ -51,7 +51,7 @@ describe('Tests users', () => {
     it('should return one user', async () => {
       const user = await usersController.findOne({
         id: '163a4bd1-cabd-44ee-b911-9ee2533dd000',
-        jwt,
+        token,
       });
       expect(user.firstName).toEqual('Adel');
       expect(user.lastName).toEqual('Sen');
@@ -60,7 +60,7 @@ describe('Tests users', () => {
       await expect(
         usersController.findOne({
           id: 'c63a4bd1-cabd-44ee-b911-9ee2533dd050',
-          jwt,
+          token,
         }),
       ).rejects.toThrow();
     });
@@ -69,13 +69,13 @@ describe('Tests users', () => {
   describe('Test create a user', () => {
     it('should return the new user email', async () => {
       const data = {
+        token,
         body: {
           firstName: 'John',
           lastName: 'Snow',
           email: 'jsnow@bng.fr',
           role: UserRole.INSTRUCTOR,
         },
-        jwt,
       };
 
       const user = await usersController.create(data);
@@ -88,9 +88,11 @@ describe('Tests users', () => {
       // mailerService.sendMail.mockResolvedValue(true);
 
       const data = {
-        oldPwd: 'password',
-        password: 'new-password',
-        jwt,
+        body: {
+          oldPwd: 'password',
+          password: 'new-password',
+        },
+        token,
       };
       expect((await usersController.updatePassword(data)).affected).toEqual(1);
     });
@@ -99,8 +101,10 @@ describe('Tests users', () => {
   describe('Test update user profile', () => {
     it('should return the number of affected resources', async () => {
       const data = {
-        firstName: 'John',
-        jwt,
+        body: {
+          firstName: 'John',
+        },
+        token,
       };
       expect((await usersController.updateProfile(data)).affected).toEqual(1);
     });
@@ -110,8 +114,10 @@ describe('Tests users', () => {
     it('should return the number of affected resources', async () => {
       const data = {
         id: 'c63a4bd1-cabd-44ee-b911-9ee2533dd006',
-        role: UserRole.TECHNICIAN,
-        jwt,
+        body: {
+          role: UserRole.TECHNICIAN,
+        },
+        token,
       };
       expect((await usersController.updateRole(data)).affected).toEqual(1);
     });
@@ -121,7 +127,7 @@ describe('Tests users', () => {
     it('should return the number of affected resources', async () => {
       const data = {
         id: 'c63a4bd1-cabd-44ee-b911-9ee2533dd017',
-        jwt,
+        token,
       };
       expect((await usersController.remove(data)).affected).toEqual(1);
     });

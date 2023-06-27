@@ -6,7 +6,7 @@ import { User, UserRole } from './users.entity';
 import { CreateUserPayload, UpdatePasswordPayload, UpdateProfilePayload, UpdateRolePayload } from './users.dto';
 import { AuthGuard, RolesGuard } from '../auth/auth.guard';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { RequestPayload } from 'src/types';
+import { RequestPayload } from '../../types';
 
 @Controller()
 export class UsersController {
@@ -44,19 +44,19 @@ export class UsersController {
   @EventPattern('users.updatePassword')
   @UseGuards(AuthGuard, new RolesGuard('*'))
   public updatePassword(@Payload() payload: UpdatePasswordPayload): Promise<UpdateResult> {
-    return this.userService.updatePassword(payload.body);
+    return this.userService.updatePassword(payload.token, payload.body);
   }
 
   @EventPattern('users.updateProfile')
   @UseGuards(AuthGuard, new RolesGuard('*'))
   public updateProfile(@Payload() payload: UpdateProfilePayload): Promise<UpdateResult> {
-    return this.userService.updateProfile(payload.body);
+    return this.userService.updateProfile(payload.token, payload.body);
   }
 
   @EventPattern('users.updateRole')
   @UseGuards(AuthGuard, new RolesGuard('*'))
   public updateRole(@Payload() payload: UpdateRolePayload): Promise<UpdateResult> {
-    return this.userService.updateRole(payload.body);
+    return this.userService.updateRole(payload.id, payload.body);
   }
 
   @EventPattern('users.remove')

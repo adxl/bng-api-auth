@@ -4,7 +4,6 @@ import {
   IsEnum,
   IsNotEmptyObject,
   IsOptional,
-  IsString,
   IsStrongPassword,
   IsUUID,
   MinLength,
@@ -12,7 +11,7 @@ import {
 } from 'class-validator';
 import { UserRole } from './users.entity';
 import { Type } from 'class-transformer';
-import { RequestPayload } from 'src/types';
+import { RequestPayload } from '../../types';
 
 export class CreateUserDto {
   @IsAlpha()
@@ -44,9 +43,6 @@ export class UpdatePasswordDto {
   @IsStrongPassword()
   @MinLength(8)
   password: string;
-
-  @IsString()
-  token: string;
 }
 
 export class UpdatePasswordPayload extends RequestPayload {
@@ -66,9 +62,6 @@ export class UpdateProfileDto {
   @IsAlpha()
   @IsOptional()
   lastName?: string;
-
-  @IsString()
-  token: string;
 }
 
 export class UpdateProfilePayload extends RequestPayload {
@@ -81,14 +74,8 @@ export class UpdateProfilePayload extends RequestPayload {
 //---
 
 export class UpdateRoleDto {
-  @IsUUID()
-  id: string;
-
   @IsEnum(UserRole)
   role: UserRole;
-
-  @IsString()
-  token: string;
 }
 
 export class UpdateRolePayload extends RequestPayload {

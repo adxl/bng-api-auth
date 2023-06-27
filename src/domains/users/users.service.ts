@@ -66,8 +66,8 @@ export class UsersService {
     return newUser;
   }
 
-  public async updatePassword(body: UpdatePasswordDto): Promise<UpdateResult> {
-    const user: User = await this.authService.findOne(body.token);
+  public async updatePassword(token: string, body: UpdatePasswordDto): Promise<UpdateResult> {
+    const user: User = await this.authService.findOne(token);
 
     if (!this.helper.validPwd(user, body.oldPwd)) {
       throw new RpcException(new NotFoundException('User not found!'));
@@ -78,16 +78,13 @@ export class UsersService {
     return this.userRepository.update(user.id, user);
   }
 
-  public async updateProfile(body: UpdateProfileDto): Promise<UpdateResult> {
-    const user: User = await this.authService.findOne(body.token);
-
-    delete body.token;
-
+  public async updateProfile(token, body: UpdateProfileDto): Promise<UpdateResult> {
+    const user: User = await this.authService.findOne(token);
     return this.userRepository.update(user.id, body);
   }
 
-  public async updateRole(body: UpdateRoleDto): Promise<UpdateResult> {
-    return this.userRepository.update(body.id, { role: body.role });
+  public async updateRole(id: string, body: UpdateRoleDto): Promise<UpdateResult> {
+    return this.userRepository.update(id, { role: body.role });
   }
 
   public async remove(id: string): Promise<DeleteResult> {

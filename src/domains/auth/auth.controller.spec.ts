@@ -13,7 +13,7 @@ import { UsersService } from '../users/users.service';
 describe('Tests users', () => {
   let authController: AuthController;
   let jwtService: JwtService;
-  let jwt = null;
+  let token = '';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,39 +31,41 @@ describe('Tests users', () => {
     authController = module.get(AuthController);
     jwtService = module.get(JwtService);
 
-    jwt = { token: 'Bearer ' + jwtService.sign({ id: '163a4bd1-cabd-44ee-b911-9ee2533dd003' }) };
+    token = 'Bearer ' + jwtService.sign({ id: '163a4bd1-cabd-44ee-b911-9ee2533dd003' });
   });
 
   describe('Test register', () => {
     it('should return the newly created user', async () => {
-      const data = {
+      const body = {
         firstName: 'John',
         lastName: 'Doe',
         email: 'jdoe@bgn.fr',
         password: 'p4ssw0rd',
       };
 
-      const user = await authController.register(data);
+      const user = await authController.register({ body });
       expect(user.email).toBe('jdoe@bgn.fr');
     });
   });
 
   describe('Test login', () => {
     it('should return a JWT', async () => {
-      const data = {
+      const body = {
         email: 'jdoe@bgn.fr',
         password: 'p4ssw0rd',
       };
 
-      const token = await authController.login(data);
+      const token = await authController.login({ body });
       expect(typeof token).toBe('string');
     });
 
     it('should throws a not found exception', async () => {
       await expect(
         authController.login({
-          email: 'someone@bgn.fr',
-          password: 'test',
+          body: {
+            email: 'someone@bgn.fr',
+            password: 'test',
+          },
         }),
       ).rejects.toThrow();
     });
@@ -88,8 +90,7 @@ describe('Tests users', () => {
 
   describe('Test get current user', () => {
     it('should return the current user information', async () => {
-      const data = { jwt };
-      const user = await authController.me(data);
+      const user = await authController.me({ token });
 
       expect(user.firstName).toBe('Thomas');
       expect(user.lastName).toBe('Geoffron');
