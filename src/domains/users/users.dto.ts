@@ -2,6 +2,7 @@ import {
   IsAlpha,
   IsEmail,
   IsEnum,
+  IsNotEmptyObject,
   IsOptional,
   IsString,
   IsStrongPassword,
@@ -11,13 +12,9 @@ import {
 } from 'class-validator';
 import { UserRole } from './users.entity';
 import { Type } from 'class-transformer';
+import { RequestPayload } from 'src/types';
 
-export class TokenDto {
-  @IsString()
-  token: string;
-}
-
-export class CreateDto {
+export class CreateUserDto {
   @IsAlpha()
   firstName: string;
 
@@ -31,33 +28,14 @@ export class CreateDto {
   role: UserRole;
 }
 
-export class CreateDtoWrapper {
+export class CreateUserPayload extends RequestPayload {
+  @IsNotEmptyObject()
   @ValidateNested()
-  @Type(() => CreateDto)
-  body: CreateDto;
-
-  @ValidateNested()
-  @Type(() => TokenDto)
-  jwt: TokenDto;
+  @Type(() => CreateUserDto)
+  body: CreateUserDto;
 }
 
-export class FindOneDto {
-  @IsUUID()
-  id: string;
-
-  @ValidateNested()
-  @Type(() => TokenDto)
-  jwt: TokenDto;
-}
-
-export class RemoveDto {
-  @IsUUID()
-  id: string;
-
-  @ValidateNested()
-  @Type(() => TokenDto)
-  jwt: TokenDto;
-}
+// ---
 
 export class UpdatePasswordDto {
   @MinLength(8)
@@ -67,10 +45,18 @@ export class UpdatePasswordDto {
   @MinLength(8)
   password: string;
 
-  @ValidateNested()
-  @Type(() => TokenDto)
-  jwt: TokenDto;
+  @IsString()
+  token: string;
 }
+
+export class UpdatePasswordPayload extends RequestPayload {
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => UpdatePasswordDto)
+  body: UpdatePasswordDto;
+}
+
+// ---
 
 export class UpdateProfileDto {
   @IsAlpha()
@@ -81,10 +67,18 @@ export class UpdateProfileDto {
   @IsOptional()
   lastName?: string;
 
-  @ValidateNested()
-  @Type(() => TokenDto)
-  jwt: TokenDto;
+  @IsString()
+  token: string;
 }
+
+export class UpdateProfilePayload extends RequestPayload {
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => UpdateProfileDto)
+  body: UpdateProfileDto;
+}
+
+//---
 
 export class UpdateRoleDto {
   @IsUUID()
@@ -93,7 +87,13 @@ export class UpdateRoleDto {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @IsString()
+  token: string;
+}
+
+export class UpdateRolePayload extends RequestPayload {
+  @IsNotEmptyObject()
   @ValidateNested()
-  @Type(() => TokenDto)
-  jwt: TokenDto;
+  @Type(() => UpdateRoleDto)
+  body: UpdateRoleDto;
 }

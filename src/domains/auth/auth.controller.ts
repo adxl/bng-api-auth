@@ -1,11 +1,10 @@
 import { ClassSerializerInterceptor, Controller, Inject, UseInterceptors } from '@nestjs/common';
-import { EventPattern } from '@nestjs/microservices';
+import { EventPattern, Payload } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/register.dto';
-import { LoginDto } from './dto/login.dto';
+import { RegisterPayload } from './dto/register.dto';
+import { LoginPayload } from './dto/login.dto';
 import { User } from '../users/users.entity';
-import { VerifyDto } from './dto/verify.dto';
-import { RequestToken } from '../../types/token';
+import { RequestPayload } from 'src/types';
 
 @Controller()
 export class AuthController {
@@ -14,23 +13,23 @@ export class AuthController {
 
   @EventPattern('auth.register')
   @UseInterceptors(ClassSerializerInterceptor)
-  public register(data: RegisterDto): Promise<User> {
-    return this.authService.register(data);
+  public register(@Payload() payload: RegisterPayload): Promise<User> {
+    return this.authService.register(payload.body);
   }
 
   @EventPattern('auth.login')
-  public login(data: LoginDto): Promise<string> {
-    return this.authService.login(data);
+  public login(@Payload() payload: LoginPayload): Promise<string> {
+    return this.authService.login(payload.body);
   }
 
   @EventPattern('auth.verify')
-  public verify(body: VerifyDto): Promise<string> {
-    return this.authService.verify(body);
+  public verify(@Payload() payload: RequestPayload): Promise<string> {
+    return this.authService.verify(payload);
   }
 
   @EventPattern('auth.me')
   @UseInterceptors(ClassSerializerInterceptor)
-  public me(body: RequestToken): Promise<User> {
-    return this.authService.findOne(body.jwt.token);
+  public me(@Payload() payload: RequestPayload): Promise<User> {
+    return this.authService.findOne(payload.token);
   }
 }

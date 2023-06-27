@@ -1,18 +1,12 @@
 import { ClassSerializerInterceptor, Controller, Inject, UseGuards, UseInterceptors } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { EventPattern } from '@nestjs/microservices';
+import { EventPattern, Payload } from '@nestjs/microservices';
 import { User, UserRole } from './users.entity';
 
-import {
-  CreateDtoWrapper,
-  FindOneDto,
-  RemoveDto,
-  UpdatePasswordDto,
-  UpdateProfileDto,
-  UpdateRoleDto,
-} from './users.dto';
+import { CreateUserPayload, UpdatePasswordPayload, UpdateProfilePayload, UpdateRolePayload } from './users.dto';
 import { AuthGuard, RolesGuard } from '../auth/auth.guard';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { RequestPayload } from 'src/types';
 
 @Controller()
 export class UsersController {
@@ -27,40 +21,47 @@ export class UsersController {
   }
 
   @EventPattern('users.findOne')
-  @UseGuards(AuthGuard, new RolesGuard('*'))
+  @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR]))
   @UseInterceptors(ClassSerializerInterceptor)
-  public findOne(body: FindOneDto): Promise<User> {
-    return this.userService.findOne(body.id);
+  public findOne(@Payload() payload: RequestPayload): Promise<User> {
+    return this.userService.findOne(payload.id);
+  }
+
+  @EventPattern('users.findMany')
+  @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR, UserRole.ORGANIZER]))
+  @UseInterceptors(ClassSerializerInterceptor)
+  public findMany(@Payload() payload: RequestPayload): Promise<User[]> {
+    return this.userService.findMany(payload.ids);
   }
 
   @EventPattern('users.create')
   @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR]))
   @UseInterceptors(ClassSerializerInterceptor)
-  public create(body: CreateDtoWrapper): Promise<User> {
-    return this.userService.create(body);
+  public create(@Payload() payload: CreateUserPayload): Promise<User> {
+    return this.userService.create(payload.body);
   }
 
   @EventPattern('users.updatePassword')
   @UseGuards(AuthGuard, new RolesGuard('*'))
-  public updatePassword(body: UpdatePasswordDto): Promise<UpdateResult> {
-    return this.userService.updatePassword(body);
+  public updatePassword(@Payload() payload: UpdatePasswordPayload): Promise<UpdateResult> {
+    return this.userService.updatePassword(payload.body);
   }
 
   @EventPattern('users.updateProfile')
   @UseGuards(AuthGuard, new RolesGuard('*'))
-  public updateProfile(body: UpdateProfileDto): Promise<UpdateResult> {
-    return this.userService.updateProfile(body);
+  public updateProfile(@Payload() payload: UpdateProfilePayload): Promise<UpdateResult> {
+    return this.userService.updateProfile(payload.body);
   }
 
   @EventPattern('users.updateRole')
   @UseGuards(AuthGuard, new RolesGuard('*'))
-  public updateRole(body: UpdateRoleDto): Promise<UpdateResult> {
-    return this.userService.updateRole(body);
+  public updateRole(@Payload() payload: UpdateRolePayload): Promise<UpdateResult> {
+    return this.userService.updateRole(payload.body);
   }
 
   @EventPattern('users.remove')
   @UseGuards(AuthGuard, new RolesGuard('*'))
-  public remove(body: RemoveDto): Promise<DeleteResult> {
-    return this.userService.remove(body);
+  public remove(@Payload() payload: RequestPayload): Promise<DeleteResult> {
+    return this.userService.remove(payload.id);
   }
 }

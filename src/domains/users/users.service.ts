@@ -1,9 +1,9 @@
 import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
-import { CreateDtoWrapper, RemoveDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
+import { CreateUserDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
 import { AuthService } from '../auth/auth.service';
 import { AuthHelper } from '../auth/auth.helper';
 import { MailerHelper } from '../../helpers/mailer.helper';
@@ -41,26 +41,33 @@ export class UsersService {
     return user;
   }
 
-  public async create(data: CreateDtoWrapper): Promise<User> {
+  public async findMany(ids: string[]): Promise<User[]> {
+    return this.userRepository.findBy({
+      id: In(ids),
+      removed: false,
+    });
+  }
+
+  public async create(data: CreateUserDto): Promise<User> {
     const user: User | null = await this.userRepository.findOneBy({
-      email: data.body.email,
+      email: data.email,
     });
 
     if (user) throw new RpcException(new BadRequestException('Email already exists'));
 
-    const newUser: User = this.userRepository.create(data.body);
+    const newUser: User = this.userRepository.create(data);
 
-    newUser.password = md5(data.body.email);
+    newUser.password = md5(data.email);
 
-    this.mailerHelper.sendUserCreationEmail(newUser.email, newUser.password);
+    await this.mailerHelper.sendUserCreationEmail(newUser.email, newUser.password);
 
-    this.userRepository.insert(newUser);
+    await this.userRepository.insert(newUser);
 
     return newUser;
   }
 
   public async updatePassword(body: UpdatePasswordDto): Promise<UpdateResult> {
-    const user: User = await this.authService.findOne(body.jwt.token);
+    const user: User = await this.authService.findOne(body.token);
 
     if (!this.helper.validPwd(user, body.oldPwd)) {
       throw new RpcException(new NotFoundException('User not found!'));
@@ -72,9 +79,9 @@ export class UsersService {
   }
 
   public async updateProfile(body: UpdateProfileDto): Promise<UpdateResult> {
-    const user: User = await this.authService.findOne(body.jwt.token);
+    const user: User = await this.authService.findOne(body.token);
 
-    delete body.jwt;
+    delete body.token;
 
     return this.userRepository.update(user.id, body);
   }
@@ -83,8 +90,8 @@ export class UsersService {
     return this.userRepository.update(body.id, { role: body.role });
   }
 
-  public async remove(body: RemoveDto): Promise<DeleteResult> {
-    const user: User = await this.findOne(body.id);
+  public async remove(id: string): Promise<DeleteResult> {
+    const user: User = await this.findOne(id);
 
     user.email = md5(user.id) + '@bng-removed.com';
     user.password = bcrypt.hashSync(md5(user.id));

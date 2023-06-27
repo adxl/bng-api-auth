@@ -15,8 +15,8 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { RpcException } from '@nestjs/microservices';
 import { JwtObject } from './jwt-object.interface';
-import { VerifyDto } from './dto/verify.dto';
 import { UsersService } from '../users/users.service';
+import { RequestPayload } from 'src/types';
 
 @Injectable()
 export class AuthService {
@@ -62,8 +62,8 @@ export class AuthService {
     return this.helper.generateToken(exists);
   }
 
-  public async verify(body: VerifyDto): Promise<string> {
-    const token: string = this.helper.extractToken(body.jwt.token);
+  public async verify(body: RequestPayload): Promise<string> {
+    const token: string = this.helper.extractToken(body.token);
 
     const tokenObject: JwtObject = this.helper.decodeToken(token);
 

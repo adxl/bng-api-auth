@@ -1,4 +1,6 @@
-import { IsAlpha, IsEmail, Length } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsAlpha, IsEmail, IsNotEmptyObject, Length, ValidateNested } from 'class-validator';
+import { RequestPayload } from 'src/types';
 
 export class RegisterDto {
   @IsAlpha()
@@ -12,4 +14,11 @@ export class RegisterDto {
 
   @Length(8, 64)
   password: string;
+}
+
+export class RegisterPayload extends RequestPayload {
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => RegisterDto)
+  body: RegisterDto;
 }
