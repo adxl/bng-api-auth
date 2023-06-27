@@ -5,7 +5,6 @@ import {
   IsNotEmptyObject,
   IsOptional,
   IsStrongPassword,
-  IsUUID,
   MinLength,
   ValidateNested,
 } from 'class-validator';

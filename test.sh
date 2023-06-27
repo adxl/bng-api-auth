@@ -4,6 +4,7 @@ clear
 
 export STAGE=test
 export JWT_KEY=esgi-test
+export MAILER_DSN=smtp://user:pass@smtp:25?verify_peer=0
 export DATABASE_URL=postgres://postgres:password@localhost:5432/postgres 
 
 docker run --name bng-test-db -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres:13-alpine
