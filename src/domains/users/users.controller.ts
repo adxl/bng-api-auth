@@ -28,7 +28,7 @@ export class UsersController {
   }
 
   @EventPattern('users.findMany')
-  @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR, UserRole.ORGANIZER]))
+  @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR, UserRole.ORGANIZER, UserRole.USER]))
   @UseInterceptors(ClassSerializerInterceptor)
   public findMany(@Payload() payload: RequestPayload): Promise<User[]> {
     return this.userService.findMany(payload.ids);
