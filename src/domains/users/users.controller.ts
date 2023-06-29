@@ -28,9 +28,16 @@ export class UsersController {
   }
 
   @EventPattern('users.findMany')
-  @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR, UserRole.ORGANIZER]))
+  @UseGuards(AuthGuard, new RolesGuard([UserRole.ADMINISTRATOR, UserRole.ORGANIZER, UserRole.TECHNICIAN]))
   @UseInterceptors(ClassSerializerInterceptor)
   public findMany(@Payload() payload: RequestPayload): Promise<User[]> {
+    return this.userService.findMany(payload.ids);
+  }
+
+  @EventPattern('users.findMany.public')
+  @UseGuards(AuthGuard, new RolesGuard('*'))
+  @UseInterceptors(ClassSerializerInterceptor)
+  public findManyPublic(@Payload() payload: RequestPayload): Promise<User[]> {
     return this.userService.findMany(payload.ids);
   }
 

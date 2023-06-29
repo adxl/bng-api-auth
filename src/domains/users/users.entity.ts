@@ -1,4 +1,4 @@
-import { Exclude } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { Entity, PrimaryGeneratedColumn, Column, BeforeInsert } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
@@ -16,6 +16,7 @@ export class User {
   id: string;
 
   @Column({ unique: true })
+  @Expose({ groups: ['admin'] })
   email: string;
 
   @Column({ nullable: true })
