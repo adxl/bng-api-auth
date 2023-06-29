@@ -10,6 +10,7 @@ import { MailerHelper } from '../../helpers/mailer.helper';
 
 import * as md5 from 'md5';
 import * as bcrypt from 'bcryptjs';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -41,11 +42,17 @@ export class UsersService {
     return user;
   }
 
-  public async findMany(ids: string[]): Promise<User[]> {
-    return this.userRepository.findBy({
+  public async findMany(ids: string[], isPublic = true): Promise<User[]> {
+    const users = await this.userRepository.findBy({
       id: In(ids),
       removed: false,
     });
+
+    if (isPublic) {
+      return users;
+    }
+
+    return users.map((u) => plainToInstance(User, u));
   }
 
   public async create(data: CreateUserDto): Promise<User> {
