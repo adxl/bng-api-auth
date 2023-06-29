@@ -27,9 +27,10 @@ export class UsersService {
   private readonly mailerHelper: MailerHelper;
 
   public async findAll(): Promise<User[]> {
-    return this.userRepository.find({
+    const users = await this.userRepository.find({
       where: { removed: false },
     });
+    return users.map((u) => plainToInstance(User, u, { groups: ['admin'] }));
   }
 
   public async findOne(id: string): Promise<User> {
@@ -52,7 +53,7 @@ export class UsersService {
       return users;
     }
 
-    return users.map((u) => plainToInstance(User, u));
+    return users.map((u) => plainToInstance(User, u, { groups: ['admin'] }));
   }
 
   public async create(data: CreateUserDto): Promise<User> {
