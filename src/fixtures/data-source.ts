@@ -6,6 +6,12 @@ import { UserSeeder } from './seeds/users/users.seeder';
 const options: DataSourceOptions & SeederOptions = {
   type: 'postgres',
   url: process.env.DATABASE_URL,
+  // ssl: false,
+  // extra: {
+  //   ssl: {
+  //     rejectUnauthorized: false,
+  //   },
+  // },
   entities: [User],
   seeds: [UserSeeder],
 };

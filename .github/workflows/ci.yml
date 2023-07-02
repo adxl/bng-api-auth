@@ -67,6 +67,7 @@ jobs:
           sed -i 's|@DATABASE_URL@|${{ secrets.DATABASE_URL }}|g' ./docker-compose.deploy.yaml
           sed -i 's|@JWT_KEY@|${{ secrets.JWT_KEY }}|g' ./docker-compose.deploy.yaml
           sed -i 's|@SENTRY_DSN@|${{ secrets.SENTRY_DSN }}|g' ./docker-compose.deploy.yaml
+          sed -i 's|@MAILER_DSN@|${{ secrets.MAILER_DSN }}|g' ./docker-compose.deploy.yaml
 
       - name: Config
         uses: appleboy/scp-action@v0.1.4

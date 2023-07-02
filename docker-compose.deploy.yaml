@@ -7,6 +7,7 @@ services:
       STAGE: production
       DATABASE_URL: '@DATABASE_URL@'
       SENTRY_DSN: '@SENTRY_DSN@'
+      MAILER_DSN: '@MAILER_DSN@'
       JWT_KEY: '@JWT_KEY@'
     networks:
       - bng
