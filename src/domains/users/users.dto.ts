@@ -2,6 +2,7 @@ import {
   IsAlpha,
   IsEmail,
   IsEnum,
+  IsInt,
   IsNotEmptyObject,
   IsOptional,
   IsStrongPassword,
@@ -82,4 +83,16 @@ export class UpdateRolePayload extends RequestPayload {
   @ValidateNested()
   @Type(() => UpdateRoleDto)
   body: UpdateRoleDto;
+}
+
+export class UpdateCapsDto {
+  @IsInt()
+  caps: number;
+}
+
+export class UpdateCapsPayload extends RequestPayload {
+  @IsNotEmptyObject()
+  @ValidateNested()
+  @Type(() => UpdateCapsDto)
+  body: UpdateCapsDto;
 }

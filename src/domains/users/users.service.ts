@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { RpcException } from '@nestjs/microservices';
-import { CreateUserDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
+import { CreateUserDto, UpdateCapsDto, UpdatePasswordDto, UpdateProfileDto, UpdateRoleDto } from './users.dto';
 import { AuthService } from '../auth/auth.service';
 import { AuthHelper } from '../auth/auth.helper';
 import { MailerHelper } from '../../helpers/mailer.helper';
@@ -93,6 +93,10 @@ export class UsersService {
 
   public async updateRole(id: string, body: UpdateRoleDto): Promise<UpdateResult> {
     return this.userRepository.update(id, { role: body.role });
+  }
+
+  public async updateCaps(id: string, body: UpdateCapsDto): Promise<UpdateResult> {
+    return this.userRepository.increment({ id }, 'caps', body.caps);
   }
 
   public async remove(id: string): Promise<DeleteResult> {

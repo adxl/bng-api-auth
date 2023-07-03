@@ -3,7 +3,13 @@ import { UsersService } from './users.service';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { User, UserRole } from './users.entity';
 
-import { CreateUserPayload, UpdatePasswordPayload, UpdateProfilePayload, UpdateRolePayload } from './users.dto';
+import {
+  CreateUserPayload,
+  UpdateCapsPayload,
+  UpdatePasswordPayload,
+  UpdateProfilePayload,
+  UpdateRolePayload,
+} from './users.dto';
 import { AuthGuard, RolesGuard } from '../auth/auth.guard';
 import { DeleteResult, UpdateResult } from 'typeorm';
 import { RequestPayload } from '../../types';
@@ -62,6 +68,12 @@ export class UsersController {
   @UseGuards(AuthGuard, new RolesGuard('*'))
   public updateRole(@Payload() payload: UpdateRolePayload): Promise<UpdateResult> {
     return this.userService.updateRole(payload.id, payload.body);
+  }
+
+  @EventPattern('users.updateCaps')
+  @UseGuards(AuthGuard, new RolesGuard('*'))
+  public updateCaps(@Payload() payload: UpdateCapsPayload): Promise<UpdateResult> {
+    return this.userService.updateCaps(payload.id, payload.body);
   }
 
   @EventPattern('users.remove')

@@ -36,6 +36,9 @@ export class User {
   })
   role: UserRole;
 
+  @Column({ nullable: false, default: 0 })
+  caps: number;
+
   @Column({ default: false })
   @Exclude()
   removed?: boolean;
