@@ -1,5 +1,6 @@
 import {
   IsAlpha,
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsInt,
@@ -88,6 +89,9 @@ export class UpdateRolePayload extends RequestPayload {
 export class UpdateCapsDto {
   @IsInt()
   caps: number;
+
+  @IsBoolean()
+  add: boolean;
 }
 
 export class UpdateCapsPayload extends RequestPayload {

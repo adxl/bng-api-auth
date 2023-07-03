@@ -96,7 +96,8 @@ export class UsersService {
   }
 
   public async updateCaps(id: string, body: UpdateCapsDto): Promise<UpdateResult> {
-    return this.userRepository.increment({ id }, 'caps', body.caps);
+    if (body.add) return this.userRepository.increment({ id }, 'caps', body.caps);
+    return this.userRepository.decrement({ id }, 'caps', body.caps);
   }
 
   public async remove(id: string): Promise<DeleteResult> {
