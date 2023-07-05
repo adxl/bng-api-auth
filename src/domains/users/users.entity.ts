@@ -36,6 +36,10 @@ export class User {
   })
   role: UserRole;
 
+  @Column({ nullable: false, default: 0 })
+  @Expose({ groups: ['me'] })
+  caps: number;
+
   @Column({ default: false })
   @Exclude()
   removed?: boolean;

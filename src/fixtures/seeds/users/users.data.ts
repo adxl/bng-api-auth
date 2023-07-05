@@ -9,6 +9,7 @@ export const admins: User[] = [
     email: 'adel@bng.fr',
     password: 'password',
     role: UserRole.ADMINISTRATOR,
+    caps: 0,
   },
   {
     id: '163a4bd1-cabd-44ee-b911-9ee2533dd001',
@@ -17,6 +18,7 @@ export const admins: User[] = [
     email: 'coraline@bng.fr',
     password: 'password',
     role: UserRole.ADMINISTRATOR,
+    caps: 0,
   },
   {
     id: '163a4bd1-cabd-44ee-b911-9ee2533dd002',
@@ -25,6 +27,7 @@ export const admins: User[] = [
     email: 'oceane@bng.fr',
     password: 'password',
     role: UserRole.ADMINISTRATOR,
+    caps: 0,
   },
   {
     id: '163a4bd1-cabd-44ee-b911-9ee2533dd003',
@@ -33,6 +36,7 @@ export const admins: User[] = [
     email: 'thomas@bng.fr',
     password: 'password',
     role: UserRole.ADMINISTRATOR,
+    caps: 0,
   },
 
   {
@@ -42,6 +46,7 @@ export const admins: User[] = [
     email: 'technician@bng.fr',
     password: 'password',
     role: UserRole.TECHNICIAN,
+    caps: 0,
   },
   {
     id: '163a4bd1-cabd-44ee-b911-9ee2533dd005',
@@ -50,6 +55,7 @@ export const admins: User[] = [
     email: 'instructor@bng.fr',
     password: 'password',
     role: UserRole.INSTRUCTOR,
+    caps: 0,
   },
   {
     id: '163a4bd1-cabd-44ee-b911-9ee2533dd006',
@@ -58,6 +64,7 @@ export const admins: User[] = [
     email: 'organizer@bng.fr',
     password: 'password',
     role: UserRole.ORGANIZER,
+    caps: 0,
   },
 ];
 
@@ -70,4 +77,5 @@ export const users: User[] = userRoles.map((role, index) => ({
   email: `${role}.${index + 1}@bng.fr`.toLowerCase(),
   password: 'password',
   role,
+  caps: faker.number.int({ min: 100, max: 600 }),
 }));
