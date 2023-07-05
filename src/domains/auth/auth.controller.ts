@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, Controller, Inject, UseInterceptors } from '@nestjs/common';
+import { ClassSerializerInterceptor, Controller, Inject, SerializeOptions, UseInterceptors } from '@nestjs/common';
 import { EventPattern, Payload } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { RegisterPayload } from './dto/register.dto';
@@ -28,7 +28,7 @@ export class AuthController {
   }
 
   @EventPattern('auth.me')
-  @UseInterceptors(ClassSerializerInterceptor)
+  @SerializeOptions({ groups: ['me'] })
   public me(@Payload() payload: RequestPayload): Promise<User> {
     return this.authService.findOne(payload.token);
   }
